@@ -215,7 +215,6 @@ int main(void)
         EndDrawing();
     }
     
-    UnloadSound(countdownSound);
     CloseWindow();
     return 0;
 }
