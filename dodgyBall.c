@@ -3,6 +3,9 @@
 #define TOP_BORDER_WIDTH 40
 #define SIDE_BORDER_WIDTH 5
 #define MAX_OBSTACLES 15
+#define MAX_OBSTACLES_YELLOW 20
+#define MAX_OBSTACLES_RED 25
+#define MAX_OBSTACLES_BLACK 30
 #define MAX_HITS 3
 #define FLASH_DURATION 15
 
@@ -48,7 +51,8 @@ int main(void)
     const int screenWidth = 1600;
     const int screenHeight = 800;
     const float borderWidth = 5.0f;
-    
+    int maxObstacles = MAX_OBSTACLES; 
+     
     InitWindow(screenWidth, screenHeight, "Jogo do Art(h)ur");
     
     Vector2 ballPosition = { (float)screenWidth / 2, (float)screenHeight - 40 };
@@ -88,20 +92,23 @@ int main(void)
                     timeElapsed = 0.0f;
                 }
 
-                if (score > highscore) { // Atualizando o highscore se a pontuação atual for maior
+                if (score > highscore) {
                     highscore = score;
                 }
                 
                 if(score >= 25 && score < 35){
                     enemiesColor = YELLOW;
+                    maxObstacles = MAX_OBSTACLES_YELLOW; 
                 }
                 
                 if(score >= 35 && score < 45){
                     enemiesColor = RED;
+                    maxObstacles = MAX_OBSTACLES_RED;
                 }
 
                 if(score >= 45){
                     enemiesColor = BLACK;
+                    maxObstacles = MAX_OBSTACLES_BLACK; 
                 }
                 
                 if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) ballPosition.x += 8.0f;
@@ -115,7 +122,7 @@ int main(void)
                 if (ballPosition.y + ballRadius > screenHeight - SIDE_BORDER_WIDTH) ballPosition.y = screenHeight - SIDE_BORDER_WIDTH - ballRadius;
                 
                 
-                for (int i = 0; i < MAX_OBSTACLES; i++) {
+                for (int i = 0; i < maxObstacles; i++) {
                     obstacles[i].position.y += obstacles[i].speed;
                     if (obstacles[i].position.y - obstacles[i].radius > screenHeight) {
                         InitObstacle(&obstacles[i], screenWidth, screenHeight);
@@ -176,7 +183,7 @@ int main(void)
                 }
                 
                 if (!countdown) { // Only draw obstacles if countdown has finished
-                    for (int i = 0; i < MAX_OBSTACLES; i++) {
+                    for (int i = 0; i < maxObstacles; i++) {
                         DrawCircleV(obstacles[i].position, obstacles[i].radius, enemiesColor);
                     }
                 }
