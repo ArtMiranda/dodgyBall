@@ -97,7 +97,7 @@ int main(void)
                 }
                 
                 if(score >= 25 && score < 35){
-                    enemiesColor = YELLOW;
+                    enemiesColor = BROWN;
                     maxObstacles = MAX_OBSTACLES_YELLOW; 
                 }
                 
