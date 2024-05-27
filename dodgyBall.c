@@ -37,14 +37,12 @@ void ResetGame(Vector2 *ballPosition, int screenWidth, int screenHeight, Obstacl
     *gameOver = false;
     *flashCounter = 0;
     *timeElapsed = 0.0f;
-    *startTime = GetTime(); // Reset the start time
-    *countdown = true; // Start the countdown
+    *startTime = GetTime();
+    *countdown = true;
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         InitObstacle(&obstacles[i], screenWidth, screenHeight);
     }
 }
-
-
 
 int main(void)
 {
@@ -52,20 +50,20 @@ int main(void)
     const int screenHeight = 800;
     const float borderWidth = 5.0f;
     int maxObstacles = MAX_OBSTACLES; 
-     
-    InitWindow(screenWidth, screenHeight, "Jogo do Art(h)ur");
-    
+
+    InitWindow(screenWidth, screenHeight, "Dodgy Ball");
+
     Vector2 ballPosition = { (float)screenWidth / 2, (float)screenHeight - 40 };
     const float ballRadius = 25.0f;
     int score = 0;
     int hitCount = 0;
-    int highscore = 0; // Adicionando a variável de highscore
+    int highscore = 0;
     bool gameOver = false;
     int flashCounter = 0;
     Color enemiesColor = GREEN;
     float timeElapsed = 0.0f;
-    float startTime = GetTime(); // Store the start time
-    bool countdown = true; // Control the countdown state
+    float startTime = GetTime();
+    bool countdown = true;
 
     Obstacle obstacles[MAX_OBSTACLES];
     for (int i = 0; i < MAX_OBSTACLES; i++) {
@@ -73,17 +71,15 @@ int main(void)
     }
 
     SetTargetFPS(60);
-    
+
     while (!WindowShouldClose())
     {
-        float currentTime = GetTime(); // Get the current time
-
+        float currentTime = GetTime();
         if (!gameOver) {
             if (countdown) {
-                
-                if (currentTime - startTime >= 3.0f) { // Countdown finished
+                if (currentTime - startTime >= 3.0f) { 
                     countdown = false;
-                    startTime = GetTime(); // Reset start time for game timing
+                    startTime = GetTime();
                 }
             } else {
                 timeElapsed += GetFrameTime();
@@ -95,12 +91,12 @@ int main(void)
                 if (score > highscore) {
                     highscore = score;
                 }
-                
+
                 if(score >= 25 && score < 35){
                     enemiesColor = BROWN;
                     maxObstacles = MAX_OBSTACLES_YELLOW; 
                 }
-                
+
                 if(score >= 35 && score < 45){
                     enemiesColor = RED;
                     maxObstacles = MAX_OBSTACLES_RED;
@@ -110,7 +106,7 @@ int main(void)
                     enemiesColor = BLACK;
                     maxObstacles = MAX_OBSTACLES_BLACK; 
                 }
-                
+
                 if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) ballPosition.x += 8.0f;
                 if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) ballPosition.x -= 8.0f;
                 if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) ballPosition.y -= 8.0f;
@@ -120,8 +116,7 @@ int main(void)
                 if (ballPosition.x + ballRadius > screenWidth - SIDE_BORDER_WIDTH) ballPosition.x = screenWidth - SIDE_BORDER_WIDTH - ballRadius;
                 if (ballPosition.y - ballRadius < TOP_BORDER_WIDTH) ballPosition.y = TOP_BORDER_WIDTH + ballRadius;
                 if (ballPosition.y + ballRadius > screenHeight - SIDE_BORDER_WIDTH) ballPosition.y = screenHeight - SIDE_BORDER_WIDTH - ballRadius;
-                
-                
+
                 for (int i = 0; i < maxObstacles; i++) {
                     obstacles[i].position.y += obstacles[i].speed;
                     if (obstacles[i].position.y - obstacles[i].radius > screenHeight) {
@@ -161,7 +156,7 @@ int main(void)
                 DrawRectangle(screenWidth - SIDE_BORDER_WIDTH, 0, SIDE_BORDER_WIDTH, screenHeight, BLACK);
 
                 DrawText("Movimente a bola com as setas do teclado ou WASD", 10, 10, 20, WHITE);
-                
+
                 char scoreText[20];
                 sprintf(scoreText, "Score: %d", score);
                 int scoreTextWidth = MeasureText(scoreText, 20);
@@ -171,18 +166,18 @@ int main(void)
                 sprintf(hitText, "Hits: %d", hitCount);
                 int hitTextWidth = MeasureText(hitText, 20);
                 DrawText(hitText, screenWidth - hitTextWidth - 10, 60, 20, BLACK);
-                
-                char highscoreText[20]; // Exibindo o highscore
+
+                char highscoreText[20];
                 sprintf(highscoreText, "Highscore: %d", highscore);
                 int highscoreTextWidth = MeasureText(highscoreText, 20);
                 DrawText(highscoreText, screenWidth - highscoreTextWidth - 10, 90, 20, BLACK);
-                
+
                 DrawCircleV(ballPosition, ballRadius, WHITE);
                 for (float i = 0; i < borderWidth; i += 1.0f) {
                     DrawCircleLines((int)ballPosition.x, (int)ballPosition.y, ballRadius + i, BLUE);
                 }
-                
-                if (!countdown) { // Only draw obstacles if countdown has finished
+
+                if (!countdown) {
                     for (int i = 0; i < maxObstacles; i++) {
                         DrawCircleV(obstacles[i].position, obstacles[i].radius, enemiesColor);
                     }
@@ -198,12 +193,12 @@ int main(void)
                 }
             } else {
                 enemiesColor = GREEN;
-                ClearBackground(RAYWHITE); // Limpa a tela antes de mostrar a mensagem de fim de jogo
-                
+                ClearBackground(RAYWHITE);
+
                 const char* message = "Game Over!";
                 int textWidth = MeasureText(message, 45);
                 DrawText(message, screenWidth / 2 - textWidth / 2, screenHeight / 2 - 50 / 2, 50, RED);
-                
+
                 const char* messageSpace = "Pressione ESPAÇO para jogar novamente";
                 int spaceMessageWidth = MeasureText(messageSpace, 25);
                 DrawText(messageSpace, screenWidth / 2 - spaceMessageWidth / 2, screenHeight / 2 + 25 / 2 + 10, 25, BLACK);
@@ -221,7 +216,7 @@ int main(void)
 
         EndDrawing();
     }
-    
+
     CloseWindow();
     return 0;
 }
