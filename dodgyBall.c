@@ -51,7 +51,7 @@ int main(void)
     const float borderWidth = 5.0f;
     int maxObstacles = MAX_OBSTACLES; 
 
-    InitWindow(screenWidth, screenHeight, "Dodgy Ball");
+    InitWindow(screenWidth, screenHeight, "Dodge Ball");
 
     Vector2 ballPosition = { (float)screenWidth / 2, (float)screenHeight - 40 };
     const float ballRadius = 25.0f;
