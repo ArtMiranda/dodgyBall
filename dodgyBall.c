@@ -29,7 +29,7 @@ bool CheckCollisionCircle(Vector2 center1, float radius1, Vector2 center2, float
     return distance <= (radius1 + radius2);
 }
 
-void ResetGame(Vector2 *ballPosition, int screenWidth, int screenHeight, Obstacle obstacles[MAX_OBSTACLES], int *score, int *hitCount, bool *gameOver, int *flashCounter, float *timeElapsed, float *startTime, bool *countdown) {
+void ResetGame(Vector2 *ballPosition, int screenWidth, int screenHeight, Obstacle obstacles[MAX_OBSTACLES], int *score, int *hitCount, bool *gameOver, int *flashCounter, float *timeElapsed, float *startTime, bool *countdown, int *lastLevel) {
     ballPosition->x = screenWidth / 2;
     ballPosition->y = screenHeight - 40;
     *score = 0;
@@ -39,6 +39,7 @@ void ResetGame(Vector2 *ballPosition, int screenWidth, int screenHeight, Obstacl
     *timeElapsed = 0.0f;
     *startTime = GetTime();
     *countdown = true;
+    *lastLevel = 0;
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         InitObstacle(&obstacles[i], screenWidth, screenHeight);
     }
@@ -50,9 +51,20 @@ int main(void)
     const int screenHeight = 800;
     const float borderWidth = 5.0f;
     int maxObstacles = MAX_OBSTACLES; 
+    int lastLevel = 0;  // Variable to track the last level where the sound was played
 
     InitWindow(screenWidth, screenHeight, "Dodge Ball");
 
+    // Initialize audio device
+    InitAudioDevice();
+
+    // Load sound effects
+    Sound startSound = LoadSound("./sounds/startSound.wav");
+    Sound hitSound = LoadSound("./sounds/damage.wav");
+    Sound startHorn = LoadSound("./sounds/startSoundAfterCountdown.wav");
+    Sound levelUP = LoadSound("./sounds/levelUP.wav");
+    Sound gameOverSound = LoadSound("./sounds/gameover.wav");
+    
     Vector2 ballPosition = { (float)screenWidth / 2, (float)screenHeight - 40 };
     const float ballRadius = 25.0f;
     int score = 0;
@@ -71,6 +83,7 @@ int main(void)
     }
 
     SetTargetFPS(60);
+    PlaySound(startSound);
 
     while (!WindowShouldClose())
     {
@@ -78,6 +91,7 @@ int main(void)
         if (!gameOver) {
             if (countdown) {
                 if (currentTime - startTime >= 3.0f) { 
+                    PlaySound(startHorn);
                     countdown = false;
                     startTime = GetTime();
                 }
@@ -92,19 +106,25 @@ int main(void)
                     highscore = score;
                 }
 
-                if(score >= 25 && score < 35){
+                if (score >= 25 && lastLevel < 1) {
+                    PlaySound(levelUP);
                     enemiesColor = BROWN;
-                    maxObstacles = MAX_OBSTACLES_YELLOW; 
-                }
+                    maxObstacles = MAX_OBSTACLES_YELLOW;
+                    lastLevel = 1; 
+                } 
 
-                if(score >= 35 && score < 45){
+                if (score >= 35 && lastLevel < 2) {
+                    PlaySound(levelUP);
                     enemiesColor = RED;
                     maxObstacles = MAX_OBSTACLES_RED;
+                    lastLevel = 2;
                 }
 
-                if(score >= 45){
+                if (score >= 45 && lastLevel < 3) {
+                    PlaySound(levelUP);
                     enemiesColor = BLACK;
-                    maxObstacles = MAX_OBSTACLES_BLACK; 
+                    maxObstacles = MAX_OBSTACLES_BLACK;
+                    lastLevel = 3;
                 }
 
                 if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) ballPosition.x += 8.0f;
@@ -126,16 +146,19 @@ int main(void)
                     if (CheckCollisionCircle(ballPosition, ballRadius, obstacles[i].position, obstacles[i].radius)) {
                         hitCount++;
                         flashCounter = FLASH_DURATION;
+                        PlaySound(hitSound); 
                         InitObstacle(&obstacles[i], screenWidth, screenHeight); 
                         if (hitCount >= MAX_HITS) {
-                            gameOver = true; 
+                            gameOver = true;
+                            PlaySound(gameOverSound);
                         }
                     }
                 }
             }
         } else {
             if (IsKeyPressed(KEY_SPACE)) {
-                ResetGame(&ballPosition, screenWidth, screenHeight, obstacles, &score, &hitCount, &gameOver, &flashCounter, &timeElapsed, &startTime, &countdown);
+                PlaySound(startSound);
+                ResetGame(&ballPosition, screenWidth, screenHeight, obstacles, &score, &hitCount, &gameOver, &flashCounter, &timeElapsed, &startTime, &countdown, &lastLevel);
             }
         }
 
@@ -216,6 +239,15 @@ int main(void)
 
         EndDrawing();
     }
+
+    // Unload sound effects
+    UnloadSound(hitSound);
+    UnloadSound(startSound);
+    UnloadSound(startHorn);
+    UnloadSound(levelUP);
+    UnloadSound(gameOverSound);
+    // Close audio device
+    CloseAudioDevice();
 
     CloseWindow();
     return 0;
