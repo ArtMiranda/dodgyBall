@@ -117,14 +117,14 @@ int main(void)
                     lastLevel = 1; 
                 } 
 
-                if (score >= 35 && lastLevel < 2) {
+                if (score >= 50 && lastLevel < 2) {
                     PlaySound(levelUP);
                     enemiesColor = RED;
                     maxObstacles = MAX_OBSTACLES_RED;
                     lastLevel = 2;
                 }
 
-                if (score >= 45 && lastLevel < 3) {
+                if (score >= 75 && lastLevel < 3) {
                     PlaySound(levelUP);
                     enemiesColor = BLACK;
                     maxObstacles = MAX_OBSTACLES_BLACK;
@@ -207,7 +207,7 @@ int main(void)
 
                 DrawCircleV(ballPosition, ballRadius, WHITE);
                 for (float i = 0; i < borderWidth; i += 0.1f) {
-                    DrawCircleLines((int)ballPosition.x, (int)ballPosition.y, ballRadius + i, BLACK);
+                    DrawCircleLines((int)ballPosition.x, (int)ballPosition.y, ballRadius + i, BLUE);
                 }
 
                 if (!countdown) {
