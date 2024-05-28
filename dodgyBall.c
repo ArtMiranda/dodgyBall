@@ -53,7 +53,7 @@ int main(void)
     int maxObstacles = MAX_OBSTACLES; 
     int lastLevel = 0;  // Variable to track the last level where the sound was played
 
-    InitWindow(screenWidth, screenHeight, "Dodge Ball");
+    InitWindow(screenWidth, screenHeight, "Dodge Game");
 
     // Initialize audio device
     InitAudioDevice();
