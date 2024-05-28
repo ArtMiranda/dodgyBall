@@ -64,6 +64,7 @@ int main(void)
     Sound startHorn = LoadSound("./sounds/startSoundAfterCountdown.wav");
     Sound levelUP = LoadSound("./sounds/levelUP.wav");
     Sound gameOverSound = LoadSound("./sounds/gameover.wav");
+    Sound soundTrack = LoadSound("./sounds/soundtrack.mp3");
     
     Vector2 ballPosition = { (float)screenWidth / 2, (float)screenHeight - 40 };
     const float ballRadius = 25.0f;
@@ -84,14 +85,17 @@ int main(void)
 
     SetTargetFPS(60);
     PlaySound(startSound);
-
     while (!WindowShouldClose())
     {
         float currentTime = GetTime();
         if (!gameOver) {
+
             if (countdown) {
+
                 if (currentTime - startTime >= 3.0f) { 
                     PlaySound(startHorn);
+                    PlaySound(soundTrack);
+
                     countdown = false;
                     startTime = GetTime();
                 }
@@ -127,6 +131,11 @@ int main(void)
                     lastLevel = 3;
                 }
 
+                if (!IsSoundPlaying(soundTrack)) {
+                    PlaySound(soundTrack);
+                }
+
+
                 if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) ballPosition.x += 8.0f;
                 if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) ballPosition.x -= 8.0f;
                 if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) ballPosition.y -= 8.0f;
@@ -150,6 +159,7 @@ int main(void)
                         InitObstacle(&obstacles[i], screenWidth, screenHeight); 
                         if (hitCount >= MAX_HITS) {
                             gameOver = true;
+                            StopSound(soundTrack);
                             PlaySound(gameOverSound);
                         }
                     }
@@ -196,8 +206,8 @@ int main(void)
                 DrawText(highscoreText, screenWidth - highscoreTextWidth - 10, 90, 20, BLACK);
 
                 DrawCircleV(ballPosition, ballRadius, WHITE);
-                for (float i = 0; i < borderWidth; i += 1.0f) {
-                    DrawCircleLines((int)ballPosition.x, (int)ballPosition.y, ballRadius + i, BLUE);
+                for (float i = 0; i < borderWidth; i += 0.1f) {
+                    DrawCircleLines((int)ballPosition.x, (int)ballPosition.y, ballRadius + i, BLACK);
                 }
 
                 if (!countdown) {
